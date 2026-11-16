@@ -1,0 +1,218 @@
+:root {
+  --bg: #0b0b10;
+  --panel: rgba(16, 16, 22, 0.88);
+  --text: #ecebe6;
+  --muted: #9a98a3;
+  --line: rgba(255, 255, 255, 0.08);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { margin: 0; height: 100%; }
+
+.map { position: absolute; inset: 0; height: 100%; width: 100%;}
+
+.panel {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 300px;
+  max-width: calc(100vw - 32px);
+  padding: 18px 18px 14px;
+  background: var(--panel);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  /* Never taller than the window: scroll inside instead of being cut off */
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+.panel h1 { margin: 0 0 6px; font-size: 19px; line-height: 1.2; font-weight: 650; }
+.lede { margin: 0 0 14px; font-size: 13px; line-height: 1.45; color: var(--muted); }
+.lede a { color: var(--text); }
+
+.legend { list-style: none; margin: 0; padding: 0; }
+.legend button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 5px 4px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+.legend button:hover { background: rgba(255, 255, 255, 0.06); }
+.legend li.off { opacity: 0.35; }
+.swatch { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+.label { flex: 1; }
+.count { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.reset {
+  margin-top: 8px;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.segmented {
+  display: flex;
+  gap: 2px;
+  margin: 0 0 12px;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+}
+.segmented button {
+  flex: 1;
+  padding: 5px 6px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.segmented button:hover { color: var(--text); }
+.segmented button.on { background: rgba(255, 255, 255, 0.12); color: var(--text); font-weight: 600; }
+
+/* Day calendar: one column per week, Sunday on top */
+.cal { margin: 10px 0 8px; }
+.cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; font-size: 11.5px; color: var(--muted); }
+.cal-nav {
+  width: 22px; height: 20px; padding: 0;
+  border: 0; border-radius: 4px; background: none;
+  color: var(--text); font-size: 15px; line-height: 1; cursor: pointer;
+}
+.cal-nav:hover:not(:disabled) { background: rgba(255, 255, 255, 0.08); }
+.cal-nav:disabled { opacity: 0.25; cursor: default; }
+.cal-grid { display: grid; gap: 3px; align-items: center; }
+.cal-month, .cal-wd { font-size: 9.5px; text-align: center; color: var(--muted); line-height: 1; white-space: nowrap; overflow: visible; }
+.cal-cell {
+  aspect-ratio: 1; width: 100%; padding: 0;
+  border: 0; border-radius: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+}
+.cal-cell:hover { outline: 1px solid rgba(255, 255, 255, 0.7); outline-offset: 0; }
+.cal-cell:focus-visible { outline: 2px solid #fff; outline-offset: 1px; }
+.cal-cell.selected { outline: 2px solid #fff; outline-offset: 0; position: relative; z-index: 1; }
+.cal-empty { background: none; cursor: default; }
+.cal-empty:hover { outline: none; }
+.cal-caption { margin: 5px 0 0; min-height: 15px; font-size: 11px; color: var(--muted); }
+
+.heatkey { display: flex; flex-wrap: wrap; align-items: center; gap: 3px 8px; margin: 0 0 16px; font-size: 11px; color: var(--muted); }
+.heatkey-note { flex-basis: 100%; font-size: 10.5px; opacity: 0.8; }
+
+/* Collapsible sections (<details>): header shows the current choice when collapsed */
+.acc { border-top: 1px solid var(--line); }
+.acc:last-of-type { border-bottom: 1px solid var(--line); }
+.acc summary { list-style: none; cursor: pointer; padding: 10px 0; margin: 0; }
+.acc summary::-webkit-details-marker { display: none; }
+.acc summary:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 4px; }
+.acc[open] summary { padding-bottom: 8px; }
+.acc-body { padding-bottom: 12px; }
+.acc-body > :last-child { margin-bottom: 0; }
+.acc-chevron {
+  width: 7px; height: 7px; margin: 0 2px 2px 10px; flex: none; align-self: center;
+  border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted);
+  transform: rotate(45deg); transition: transform 0.15s;
+}
+.acc[open] .acc-chevron { transform: rotate(-135deg); margin-bottom: -2px; }
+.section-title { flex: none; }
+.section .section-hint { margin-left: auto; text-align: right; }
+
+/* Section labels: group the controls; brighter and bolder than body copy, quieter than the title */
+.section {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin: 0 0 8px;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+  color: #d4d2db;
+}
+.section-hint { font-size: 11px; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--muted); }
+.hint-touch { display: none; }
+@media (hover: none) {
+  .hint-pointer { display: none; }
+  .hint-touch { display: inline; }
+}
+.heatkey-ramp {
+  flex: 1; height: 6px; border-radius: 3px;
+  /* Same stops as heatColor in SmellMap.tsx */
+  background: linear-gradient(90deg, rgba(76,29,110,0.55), #8e2a78, #d6455a, #f5823a, #ffd04d, #fff6c8);
+}
+
+.status { display: flex; align-items: center; gap: 7px; margin: 10px 0 0; font-size: 11.5px; color: var(--muted); }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); flex: none; }
+.status-live .status-dot { background: #57d17a; box-shadow: 0 0 6px #57d17a; }
+.status-offline .status-dot { background: #e0a43a; }
+
+.credit { margin: 6px 0 0; font-size: 11px; color: var(--muted); }
+
+/* Popup
+   Selectors are scoped under .mapboxgl-popup so they outrank mapbox-gl.css,
+   which is imported after this file and would otherwise paint the popup white. */
+.mapboxgl-popup .mapboxgl-popup-content {
+  background: #1f1f26;
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+.mapboxgl-popup .mapboxgl-popup-tip { display: none; }
+.popup { display: grid; gap: 5px; font-size: 13px; line-height: 1.4; }
+.popup-type {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; font-weight: 650; color: #ffffff;
+}
+.popup-type::before {
+  content: '';
+  width: 10px; height: 10px; border-radius: 50%; flex: none;
+  background: var(--swatch);
+  box-shadow: 0 0 6px var(--swatch); /* small glow so the category color reads on grey */
+}
+.popup-value { color: #c9c7d1; font-weight: 500; }
+.popup-quote {
+  margin: 2px 0;
+  padding-left: 8px;
+  border-left: 2px solid var(--swatch, var(--line));
+  color: #f2f1ec;
+  font-style: italic;
+}
+.popup-meta { color: #b3b1bc; font-size: 12px; }
+.popup-time {
+  margin-top: 2px; padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: #8e8c98; font-size: 11.5px; font-variant-numeric: tabular-nums;
+}
+
+/* Phones: pinned top-left, full width inside 12px margins, sections start collapsed (Legend.tsx) */
+@media (max-width: 600px) {
+  .panel {
+    top: 12px; left: 12px; right: 12px;
+    width: auto; max-width: none;
+    max-height: calc(100dvh - 24px);
+    padding: 12px 14px 10px;
+  }
+  .panel h1 { font-size: 16px; margin-bottom: 4px; }
+  .lede { font-size: 12.5px; margin-bottom: 10px; }
+  .legend { columns: 2; column-gap: 8px; }
+  .credit { display: none; }
+}
