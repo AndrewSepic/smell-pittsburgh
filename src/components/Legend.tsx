@@ -52,14 +52,14 @@ export default function Legend(p: Props) {
       : `${p.visible.size} types`;
   return (
     <aside className="panel">
-      <h1>Smell Pittsburgh</h1>
+      <h1>Smell Pittsburgh Viewer</h1>
       <p className="lede">
         {p.loading ? '…' : total.toLocaleString()} odor reports{' '}
         {describeSel(p.sel)} from residents via{' '}
         <a href="https://smellpittsburgh.org" target="_blank" rel="noreferrer">
           Smell Pittsburgh
         </a>
-        . Bigger dots are worse smells.
+        . Bigger dots are worse smells. White outlines are reports within the last 24hrs.
       </p>
 
       <Section title="When" value={shortSel(p.sel)}>
